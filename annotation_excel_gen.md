@@ -1,0 +1,114 @@
+# annotation_excel_gen.py
+
+Generates per-channel annotation Excel files from ROI overlay images.
+Each row represents one representative frame per 5-second bucket, for human annotators to fill in class counts.
+
+---
+
+## Dependencies
+
+```bash
+pip install openpyxl pillow
+```
+
+---
+
+## Usage
+
+```bash
+# Default paths
+python3 annotation_excel_gen.py
+
+# Custom paths
+python3 annotation_excel_gen.py --input-dir /path/to/roi_overlay_output --output-dir /path/to/annotation_excel
+```
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--input-dir` | `roi_overlay_output/` | Directory containing `*_frames` subdirectories |
+| `--output-dir` | `annotation_excel/` | Where output `.xlsx` files are written |
+
+---
+
+## Input
+
+A directory of **clip frame folders**, each named:
+```
+<outlet>_<channelN>_<YYYYMMDDTHHMMSS>_frames
+```
+
+Example:
+```
+roi_overlay_output/
+├── outlet1_channel1002_20220126T103000_frames/
+│   ├── outlet1_channel1002_20220126T103000_001.jpg
+│   ├── outlet1_channel1002_20220126T103000_007.jpg
+│   └── ...
+├── outlet1_channel1202_20220126T103000_frames/
+│   └── ...
+```
+
+### Folder naming rules
+| Part | Example | Purpose |
+|------|---------|---------|
+| outlet | `outlet1` | Metadata label |
+| channel | `channel1002` | Groups clips; used in output filename |
+| timestamp | `20220126T103000` | `clip_start` for frame timestamp computation |
+
+### Image files inside each folder
+- Must be `.jpg` files ending with `_<frame_id>.jpg` (e.g. `_001.jpg`, `_042.jpg`)
+- `frame_id` is used to compute the frame's timestamp
+
+---
+
+## Output
+
+One `.xlsx` file per channel written to the output directory:
+```
+annotation_excel/
+├── annotation_channel1002.xlsx
+├── annotation_channel1202.xlsx
+└── ...
+```
+
+### Column layout (per sheet)
+
+| Col | Header | Content | Color |
+|-----|--------|---------|-------|
+| A | Frame | Thumbnail image (240×135 px) | — |
+| B | Channel | Camera channel ID | white / alt-blue |
+| C | Computed Timestamp (T2) | Bucket datetime (UTC) | white / alt-blue |
+| D | Frame Time | Exact computed frame timestamp | white / alt-blue |
+| E | Clip Name | Source folder name | white / alt-blue |
+| F | ✓ customer | Annotator count | pale yellow |
+| G | ✓ manager | Annotator count | pale yellow |
+| H | ✓ waiter | Annotator count | pale yellow |
+| I | ✓ sweets_people | Annotator count | pale yellow |
+| J | ✓ back_kitchen | Annotator count | pale yellow |
+| K | ✓ cleaner | Annotator count | pale yellow |
+| L | ✓ phone | Annotator count | pale yellow |
+| M | Notes | Free-text observations | pale yellow |
+
+Each workbook also contains a **Legend** sheet explaining every column.
+
+---
+
+## How frame timestamps are computed
+
+```
+frame_ts  = clip_start + (frame_id - 1) × 1.5 s    # stride=6, fps=4
+bucket_dt = floor(frame_ts / 5 s) × 5 s
+```
+
+One frame per 5-second bucket is selected — the one whose `frame_ts` is closest to the bucket start.
+
+---
+
+## Timestamp note (T1 vs T2)
+
+| Label | Source | Timezone |
+|-------|--------|----------|
+| T1 | Burned into frame by camera OSD | IST (UTC+5:30) |
+| T2 | Computed from clip filename + frame_id (column C) | UTC |
+
+T1 will appear ~5 h 30 min ahead of T2 — this is expected.

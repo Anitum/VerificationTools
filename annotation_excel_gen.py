@@ -40,9 +40,9 @@ FPS          = 4
 FRAME_STEP_S = VID_STRIDE / FPS   # 1.5 s between consecutive processed frames
 BUCKET_S     = 5                   # headcount CSV is binned at 5-second intervals
 
-THUMB_W      = 240                 # thumbnail width  (px)
-THUMB_H      = 135                 # thumbnail height (px) – 16:9
-ROW_H_PTS    = 104                 # Excel row height in points (~140 px on screen)
+THUMB_W      = 640                 # thumbnail width  (px)
+THUMB_H      = 360                 # thumbnail height (px) – 16:9
+ROW_H_PTS    = 275                 # Excel row height in points (~360 px on screen)
 
 DEFAULT_INPUT  = Path("/home/aabadmin/SHUBHAM/video_detector/verification_tool/roi_overlay_output")
 DEFAULT_OUTPUT = Path("/home/aabadmin/SHUBHAM/video_detector/verification_tool/annotation_excel")
@@ -140,7 +140,7 @@ BORDER = Border(left=thin, right=thin, top=thin, bottom=thin)
 # A=Frame  B=Channel  C=Computed Timestamp  D=Frame Time  E=Clip Name
 # F-L = annotator counts   M = Notes
 COLUMNS = (
-    [("Frame",                       34)],
+    [("Frame",                       90)],
     [("Channel",                     14)],
     [("Computed Timestamp (T2)",     24)],
     [("Frame Time",                  22)],
@@ -317,4 +317,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-How 

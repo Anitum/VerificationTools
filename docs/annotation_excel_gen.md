@@ -79,7 +79,7 @@ annotation_excel/
 
 | Col | Header | Content | Color |
 |-----|--------|---------|-------|
-| A | Frame | Thumbnail image (240×135 px) | — |
+| A | Frame | Thumbnail image (640×360 px) | — |
 | B | Channel | Camera channel ID | white / alt-blue |
 | C | Computed Timestamp (T2) | Bucket datetime (UTC) | white / alt-blue |
 | D | Frame Time | Exact computed frame timestamp | white / alt-blue |
